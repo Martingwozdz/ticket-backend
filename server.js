@@ -5,8 +5,15 @@ require('dotenv').config();
 
 const app = express();
 
-// Middlewares
-app.use(cors());
+// Configurar CORS para permitir Vercel
+app.use(cors({
+  origin: [
+    'http://localhost:3001',
+    'https://ticket-frontend-pi.vercel.app'
+  ],
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Routes
@@ -16,7 +23,6 @@ const paymentRoutes = require('./routes/paymentRoutes');
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/payment', paymentRoutes);
 
-// Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'Server running' });
 });
