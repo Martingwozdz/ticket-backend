@@ -4,6 +4,12 @@ const router = express.Router();
 const Ticket = require('../models/ticketModel');
 const sendEmail = require('../utils/emailService');
 
+// Precios por evento
+const EVENT_PRICES = {
+  mangrove: 260,
+  ikigai: 280
+};
+
 // Crear ticket después del pago exitoso
 router.post('/create', async (req, res) => {
   const { 
@@ -17,7 +23,7 @@ router.post('/create', async (req, res) => {
     eventType
   } = req.body;
 
-  const TICKET_PRICE = 500;
+  const TICKET_PRICE = EVENT_PRICES[eventType] || EVENT_PRICES.mangrove;
   const totalAmount = guests * TICKET_PRICE;
 
   try {
@@ -43,7 +49,8 @@ router.post('/create', async (req, res) => {
       totalAmount,
       paymentNumber,
       ticketId: newTicket.id,
-      eventType: eventType || 'mangrove'
+      eventType: eventType || 'mangrove',
+      ticketPrice: TICKET_PRICE
     });
 
     res.status(201).json({
